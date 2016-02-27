@@ -21,7 +21,12 @@ public class User {
 		try {
 			while(rs.next())
 			{
-				System.out.println(rs.getString("firstName") + " " + rs.getString("lastName"));
+				userId = rs.getInt("UserID");
+				lastName = rs.getString("lastName");
+				firstName = rs.getString("firstName");
+				email = rs.getString("email");
+				password = rs.getString("password");
+				//System.out.println(rs.getString("firstName") + " " + rs.getString("lastName"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -55,7 +60,7 @@ public class User {
 				lastName = rs.getString("lastName");
 				userId = rs.getInt("userID");
 							
-				JOptionPane.showMessageDialog(null, "Valid credentials.");
+				//JOptionPane.showMessageDialog(null, "Valid credentials.");
 			}
 		} catch (HeadlessException | SQLException e1) {
 			// TODO Auto-generated catch block

@@ -2,26 +2,20 @@ package edu.pitt.is1017.spaceinvaders;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class trying {
 
 	public static void main(String[] args) throws SQLException {
 
-		DbUtilities dbU = new DbUtilities();
-		String q = "SELECT * FROM users WHERE email = 'ASMITH@GMAIL.COM' AND password = 'aSmith123^'";
-		ResultSet rs = dbU.getResultSet(q);
-		System.out.println("hi.");
+		String i;
+		UUID j = UUID.randomUUID();
+		System.out.println(j);
+		i = String.valueOf(j);
+		System.out.println(i);
 		
-		if(rs.next() == false)
-			System.out.println("Nope.");
-		else
-		{
-			rs.first();
-			//while(rs.next())
-				System.out.println(rs.getString("firstName") + " " + rs.getString("lastName"));
-		}
-		
-		dbU.closeConnection();
+		int k = 5;
+		System.out.println(k =+ -3);
 	}
 
 }

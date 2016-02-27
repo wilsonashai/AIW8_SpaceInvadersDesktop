@@ -41,6 +41,7 @@ public class ShotEntity extends Entity {
 		// if we shot off the screen, remove ourselfs
 		if (y < -100) {
 			game.removeEntity(this);
+			game.updateScore(-1);
 		}
 	}
 	

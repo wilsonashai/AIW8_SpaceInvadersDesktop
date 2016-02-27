@@ -1,7 +1,10 @@
 package edu.pitt.is1017.spaceinvaders;
 
+// CHANGE THE LOGIN POPUP TO FIT EXAMPLE !!!!!!!
+
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 public class LoginGUI extends JFrame {
@@ -21,15 +24,10 @@ public class LoginGUI extends JFrame {
 	public LoginGUI() {
 		// sets title of window
 		setTitle("SpaceInvaders - Login");
-		// set window size
-		setSize(width, height);
 		// specifies what happens when the close button is clicked
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		buildWindow();
-		add(mainPane);
-		//pack();
-		setVisible(true);
-		
+		buildWindow();	
+		pack();
 	}
 
 	private void buildWindow() {
@@ -53,20 +51,35 @@ public class LoginGUI extends JFrame {
 		login.addActionListener(new LoginListener());
 		cancel.addActionListener(new LoginListener());
 		
-		setLayout(new BorderLayout());
-		
+		// set Layout of JFrame
+		setLayout(new GridLayout(3,2));
+				
 		// create JPanel
-		mainPane = new JPanel();
+		JPanel panel1 = new JPanel();
+		JPanel panel2 = new JPanel();
+		JPanel panel3 = new JPanel();
+		JPanel panel4 = new JPanel();
+		JPanel panel5 = new JPanel();
+		JPanel panel6 = new JPanel();
 		
-		// add all components to frame
-		mainPane.add(email, BorderLayout.NORTH);
-		mainPane.add(emlIn, BorderLayout.NORTH);
-		mainPane.add(passwd, BorderLayout.CENTER);
-		mainPane.add(pwIn, BorderLayout.CENTER);
-		mainPane.add(reg, BorderLayout.SOUTH);
-		mainPane.add(login, BorderLayout.SOUTH);
-		mainPane.add(cancel,BorderLayout.SOUTH);
+		// add components to frame
+		panel1.add(email);
+		panel2.add(emlIn);
+		panel3.add(passwd);
+		panel4.add(pwIn);
+		panel5.add(reg);
+		panel6.add(login);
+		//panel6.add(cancel);
 		
+		
+		add(panel1);
+		add(panel2);
+		add(panel3);
+		add(panel4);
+		add(panel5);
+		add(panel6);
+		
+		setVisible(true);
 	}
 	
 	//action listener for the login GUI
@@ -90,8 +103,20 @@ public class LoginGUI extends JFrame {
 			}
 			else if(action.equals("Login"))
 			{
-				//call User constructor for with email and password to validate against db
-				User logU = new User(emailInput, passwdInput);
+				// call User constructor for with email and password to validate against db
+				final User logU = new User(emailInput, passwdInput);
+				
+				Thread t = new Thread("gameLaunchThread"){
+					public void run(){							
+						// initiate & call new Game with user object as the parameter
+						Game game = new Game(logU);
+						game.gameLoop();
+						// exit out login GUI
+						//mainPane.setVisible(false);
+					}
+				};
+				
+				t.start();
 			}
 			// if user selects 'cancel' button
 			else if(action.equals("Cancel"))

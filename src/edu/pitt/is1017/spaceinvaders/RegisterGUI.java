@@ -7,13 +7,10 @@ import javax.swing.*;
 
 public class RegisterGUI extends JFrame {
 	
-	private JPanel mainPane;
 	private JLabel fName, lName, email, pwrd, confirmPw;
 	private JTextField fNameIn, lNameIn, emailIn, pwrdIn, confirmPwIn;
 	private JButton regisBut, cancelBut;
-	private int width = 300;
-	private int height = 400;
-	
+		
 	public RegisterGUI() {
 		// sets title of window
 		setTitle("SpaceInvaders - Registration");

@@ -9,9 +9,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -63,10 +66,21 @@ public class Game extends Canvas {
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop = false;
 	
+	// my addition
+	public static ScoreTracker sctrk;
+	private int userID;
+	private User user;
+	private static boolean fin = false;
+	
 	/**
 	 * Construct our game and set it running.
 	 */
-	public Game() {
+	public Game(User u) {
+		
+		this.user = u;
+		this.userID = u.getUserID();
+		System.out.println(u.getFName()+" "+ userID);
+		
 		// create a frame to contain our game
 		JFrame container = new JFrame("Space Invaders 101");
 		
@@ -122,10 +136,16 @@ public class Game extends Canvas {
 		entities.clear();
 		initEntities();
 		
+		//initiate scoretracker
+		sctrk = new ScoreTracker(user);
+		
 		// blank out any keyboard settings we might currently have
 		leftPressed = false;
 		rightPressed = false;
 		firePressed = false;
+		
+		//set game booleans dependent on whether a game has ended back to true
+		fin = false;
 	}
 	
 	/**
@@ -171,8 +191,14 @@ public class Game extends Canvas {
 	 * Notification that the player has died. 
 	 */
 	public void notifyDeath() {
-		message = "Oh no! They got you, try again?";
-		waitingForKeyPress = true;
+		// if game is over and new game hasn't started -> do nothing
+		if(!fin) {
+			message = "Oh no! They got you, try again?";
+			updateFinal();
+			gameOver();
+			waitingForKeyPress = true;
+			fin = true;
+		}	
 	}
 	
 	/**
@@ -181,6 +207,10 @@ public class Game extends Canvas {
 	 */
 	public void notifyWin() {
 		message = "Well done! You Win!";
+		//update final score
+		updateFinal();
+		//print out high score for player and leader
+		gameOver();
 		waitingForKeyPress = true;
 	}
 	
@@ -192,8 +222,13 @@ public class Game extends Canvas {
 		alienCount--;
 		
 		if (alienCount == 0) {
+			// record the final score 
+			sctrk.recordFinalScore();
 			notifyWin();
 		}
+		
+		// update score, +1 for killed
+		updateScore(1);
 		
 		// if there are still some aliens left then they all need to get faster, so
 		// speed up all the existing aliens
@@ -207,6 +242,39 @@ public class Game extends Canvas {
 		}
 	}
 	
+	public void gameOver()
+	{
+		DbUtilities db = new DbUtilities();
+		
+		// display current player's high score
+		String statement = "SELECT MAX(scoreValue) FROM alieninvasion.finalscores WHERE fk_userID = '" + user.getUserID() + "';";
+		ResultSet rs = db.getResultSet(statement);
+		ResultSet rs2 = db.getResultSet("SELECT lastName, firstName, MAX(scoreValue) FROM alieninvasion.finalscores JOIN alieninvasion.users ON fk_userID = userID GROUP BY lastName, firstName ORDER BY MAX(scoreValue) DESC LIMIT 1;");
+		
+		try {
+			rs.next();
+			rs2.next();
+			JOptionPane.showMessageDialog(null, "Your High Score: " + rs.getInt("MAX(scoreValue)") 
+					+ "\n \nHigh Score Leader: "
+					+ rs2.getString("lastName") + ", " + rs2.getString("firstName") + "\nSCORE = " + rs2.getInt("MAX(scoreValue)"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		db.closeConnection();
+	}
+	
+	public void updateScore(int i) {
+		// TODO Auto-generated method stub
+		sctrk.recordScore(i);
+		//System.out.println(sctrk.getCurrScore());
+	}
+	
+	public void updateFinal(){
+		sctrk.recordFinalScore();
+	}
+
 	/**
 	 * Attempt to fire a shot from the player. Its called "try"
 	 * since we must first check that the player can fire at this 
@@ -280,6 +348,7 @@ public class Game extends Canvas {
 						me.collidedWith(him);
 						him.collidedWith(me);
 					}
+					
 				}
 			}
 			
@@ -440,7 +509,7 @@ public class Game extends Canvas {
 	 * @param argv The arguments that are passed into our game
 	 */
 	public static void main(String argv[]) {
-		Game g =new Game();
+		Game g = new Game(new User(127));
 
 		// Start the main game loop, note: this method will not
 		// return until the game has finished running. Hence we are
