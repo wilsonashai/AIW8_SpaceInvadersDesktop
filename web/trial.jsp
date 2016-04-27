@@ -67,7 +67,7 @@
                 });
                 
                 $(window).unload(function(){
-                    gameOver();
+                    
                 });
                 
             });
@@ -140,25 +140,21 @@
                     
                     //r2 = alienList, r1 = firedbullet
                     if(!(bLeft > aRight || bRight < aLeft || 
-                            bTop > aBottom || bBottom < aTop)){
-                        
+                            bTop > aBottom || bBottom < aTop)){                      
                         //$firedBullet.css("display", "none");
                         $("#bullet_" + id).hide();
+                        //$("#bullet_" + id).remove(); 
                         console.log("#bullet_" +id);
                         $("#alien" + j).hide(); 
+                        //$("#alien" + j).remove(); 
                         console.log("#alien" + j);
                         alienList.splice(j, 1);
                         console.log("HIT");
-                        updateScore();
                         return true;
                     }
                 }
                 
                 return false;
-            }
-            
-            function updateScore(){
-                var xhttp = new XMLHttpRequest();
             }
             
             function initElements(){
@@ -219,19 +215,6 @@
                     $tblAliens.css("top", (pos.top + 10) + "px");
                     moveDown = false;
                 }
-                
-                if(($tblAliens.position().top - 10)>= docHeight)
-                {
-                    gameOver();
-                }
-            }
-            
-            function gameOver(){
-                var xttp = new XMLHttpRequest();
-//                xttp.onreadystatechange = function(){
-//                    if
-//                };
-//                xttp.open("");
             }
             
             function saveAlienPosition(pos){
