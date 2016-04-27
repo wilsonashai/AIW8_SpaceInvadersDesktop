@@ -1,0 +1,26 @@
+#alienImage{
+    position: absolute;
+/*    top: 20px;
+    left: 20px;*/
+}
+
+#tblAliens{
+    position: absolute;
+    
+}
+            
+#tblAliens tr td{
+    padding: 5px;
+}
+
+#shipImage{
+    position: absolute;
+}
+
+#shotImage{
+    position: absolute;
+}
+
+#banner{
+    position: absolute;
+}
